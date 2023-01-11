@@ -43,6 +43,8 @@ class Probabilities():
 
         return prob_arr
 
+    # Counts the faces and returns an array with the counts
+    # for each face
     def count_dice(self, dice):
         dice_counts = np.array([])
         dice = np.sort(dice)
@@ -51,6 +53,7 @@ class Probabilities():
             dice_counts = np.append(dice_counts, count)
         return dice_counts
 
+    # Calculates the probability to get a three-of-a-kind for a given number
     def calc_upper(self, dice_counts, throws_left, num):
         if (throws_left == 3):
             return np.linalg.matrix_power(constant.UPPER_SECTION_TRANSITION, 2)@(constant.UPPER_SECTION_INITIAL)
@@ -60,12 +63,15 @@ class Probabilities():
         if (count > 3):
             count = 3
         elif (count == 0):
+            if (throws_left == 0):
+                return np.zeros(5)
             return constant.UPPER_SECTION_INITIAL
 
         initial_state[int(count - 1)] = 1
         return np.linalg.matrix_power(constant.UPPER_SECTION_TRANSITION, throws_left)@initial_state
         
 
+    # Calculates the probability for two to five -of-a-kinds
     def calc_of_a_kind(self, dice_counts, throws_left):
         if (throws_left == 3):
             return np.linalg.matrix_power(constant.OF_A_KIND_TRANSITION, 2)@constant.OF_A_KIND_INITIAL
@@ -76,7 +82,6 @@ class Probabilities():
         initial_state[int(np.amax(dice_counts, axis=None) - 1)] = 1
         return np.linalg.matrix_power(constant.OF_A_KIND_TRANSITION, throws_left)@initial_state
 
-    
     def calc_small_straight(self, dice_counts, throws_left):
         if (throws_left == 3):
             return np.linalg.matrix_power(constant.STRAIGHTS_TRANSITION, 2)@constant.STRAIGHTS_INITIAL

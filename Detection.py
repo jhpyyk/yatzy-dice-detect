@@ -11,9 +11,9 @@ class Detection():
     def __init__(self):
         self.video = Capture()
         self.dice = np.array([])
-        # load pretrained model
+        # Load pretrained model
         self.model = yolov5.load('best.pt')
-        # set model parameters
+        # Set model parameters
         self.model.conf = 0.75 # NMS confidence threshold
         self.model.iou = 0.45 # NMS IoU threshold
         self.model.agnostic = False # NMS class-agnostic
@@ -26,17 +26,15 @@ class Detection():
                         5:(88, 71, 151),
                         6:(59, 123, 189)}
 
-
+    # Returns image with detection captions
     def get_img(self):
 
         self.dice = np.array([])
-
         ret, img = self.video.get_frame()
-
         results = self.model(img)
 
         for obj in results.pred[0]:
-            x1, y1, x2, y2, conf, cat = obj.numpy()
+            x1, y1, x2, y2, conf, cat = obj.detach().cpu().numpy()
             # Add 1 to category to get the die face value
             x1, y1, x2, y2, cat = int(x1), int(y1), int(x2), int(y2), int(cat + 1)
             self.dice = np.append(self.dice, cat)
